@@ -10,42 +10,27 @@ from app.db.session import get_sync_session
 
 
 def fix_difficulty():
-    """Fix the difficulty enum value to uppercase."""
+    """Check PostgreSQL enum values and case data."""
     session = get_sync_session()
     
     try:
+        # Check PostgreSQL enum values
+        result = session.execute(text("SELECT unnest(enum_range(NULL::difficultylevel))"))
+        enum_vals = [row[0] for row in result]
+        print(f"PostgreSQL enum values: {enum_vals}")
+        
         # Check current values
         result = session.execute(text("SELECT id, title, difficulty FROM cases"))
         rows = result.fetchall()
-        print("Current cases:")
+        print("\nCurrent cases:")
         for row in rows:
             print(f"  {row}")
         
-        # The enum column might need to be updated
-        # First, let's see the column type
-        result = session.execute(text("""
-            SELECT column_name, data_type, udt_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'cases' AND column_name = 'difficulty'
-        """))
-        col_info = result.fetchone()
-        print(f"\nColumn info: {col_info}")
-        
-        # Update difficulty to uppercase ADVANCED if it's lowercase
-        session.execute(text("""
-            UPDATE cases 
-            SET difficulty = 'ADVANCED' 
-            WHERE difficulty = 'advanced' OR difficulty = 'Advanced'
-        """))
-        session.commit()
-        print("\nUpdated difficulty to ADVANCED")
-        
-        # Verify
-        result = session.execute(text("SELECT id, title, difficulty FROM cases"))
-        rows = result.fetchall()
-        print("\nAfter fix:")
-        for row in rows:
-            print(f"  {row}")
+        # Check what the Python enum expects
+        from app.db.models import DifficultyLevel
+        print("\nPython DifficultyLevel enum:")
+        for level in DifficultyLevel:
+            print(f"  {level.name} = '{level.value}'")
             
     except Exception as e:
         session.rollback()
