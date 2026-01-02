@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+/* Investigation Portal Theme - Dark, Professional, No Distractions */
+@theme inline {
+  /* Color System - Grayscale Only */
+  --color-investigation-bg: #0a0a0a;
+  --color-investigation-surface: #141414;
+  --color-investigation-border: #262626;
+  --color-investigation-text: #e5e5e5;
+  --color-investigation-muted: #737373;
+  --color-investigation-accent: #525252;
+  --color-investigation-success: #404040;
+  --color-investigation-error: #505050;
+
+  /* Typography */
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Force dark mode always */
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-investigation-bg);
+  color: var(--color-investigation-text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Remove all animations and transitions */
+*,
+*::before,
+*::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}
+
+/* Base Elements */
+a {
+  color: var(--color-investigation-muted);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-investigation-text);
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Component Primitives */
+.investigation-input {
+  background: var(--color-investigation-surface);
+  border: 1px solid var(--color-investigation-border);
+  padding: 0.75rem 1rem;
+  color: var(--color-investigation-text);
+  width: 100%;
+}
+
+.investigation-input::placeholder {
+  color: var(--color-investigation-muted);
+}
+
+.investigation-input:focus {
+  outline: none;
+  border-color: var(--color-investigation-accent);
+}
+
+.investigation-button {
+  background: var(--color-investigation-surface);
+  border: 1px solid var(--color-investigation-border);
+  padding: 0.75rem 1.5rem;
+  color: var(--color-investigation-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 12px;
+}
+
+.investigation-button:hover {
+  background: var(--color-investigation-accent);
+  color: white;
+}
+
+.investigation-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.investigation-card {
+  background: var(--color-investigation-surface);
+  border: 1px solid var(--color-investigation-border);
+  padding: 2rem;
+}
+
+.investigation-heading {
+  color: var(--color-investigation-text);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+}
