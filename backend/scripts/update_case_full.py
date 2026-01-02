@@ -31,47 +31,42 @@ OBJECTIVES = """1. Analyze all provided artifacts for signs of data exfiltration
 3. Determine the method and timing of any data transfer
 4. Recover the external contact email used for coordination"""
 
-# Artifacts to seed
+# Artifacts to seed - using actual column names from migration
 ARTIFACTS = [
     {
         "name": "GitHub Organization Export",
         "description": "Complete export of the nexus-dynamics-org GitHub organization, including all repositories Marcus had access to, commit histories, and organization metadata.",
         "artifact_type": "archive",
-        "filename": "github_export.tar.gz",
         "storage_path": "cases/001-the-disappearance/github_export.tar.gz",
-        "display_order": 1,
+        "mime_type": "application/gzip",
     },
     {
         "name": "Telegram Chat Export",
         "description": "Export of Marcus's Telegram activity from a tech industry group chat he participated in.",
         "artifact_type": "document",
-        "filename": "telegram_export.tar.gz",
-        "storage_path": "cases/001-the-disappearance/telegram_export.tar.gz",
-        "display_order": 2,
+        "storage_path": "cases/001-the-disappearance/telegram_export/",
+        "mime_type": "application/json",
     },
     {
         "name": "Device Photo Library",
         "description": "312 images recovered from Marcus's iPhone backup. Most appear to be screenshots, memes, and wallpapers.",
         "artifact_type": "archive",
-        "filename": "image_dump.tar.gz",
         "storage_path": "cases/001-the-disappearance/images/",
-        "display_order": 3,
+        "mime_type": "image/png",
     },
     {
         "name": "Network Traffic Capture",
         "description": "48-hour PCAP capture from Marcus's workstation network port, spanning November 13-15, 2024.",
         "artifact_type": "pcap",
-        "filename": "network_capture.pcap",
         "storage_path": "cases/001-the-disappearance/network_capture.pcap",
-        "display_order": 4,
+        "mime_type": "application/vnd.tcpdump.pcap",
     },
     {
         "name": "Laptop Forensic Image",
         "description": "Forensic image of Marcus's MacBook Pro. Contains browser history, shell history, and potentially deleted files.",
         "artifact_type": "disk_image",
-        "filename": "disk_image.dd.gz",
         "storage_path": "cases/001-the-disappearance/disk_image.dd.gz",
-        "display_order": 5,
+        "mime_type": "application/gzip",
     },
 ]
 
@@ -105,6 +100,7 @@ def update_case():
             "story_background": BACKGROUND,
             "investigation_objectives": OBJECTIVES,
         })
+        session.commit()
         print("✓ Updated case story content")
         
         # Check if artifacts already exist
@@ -114,27 +110,26 @@ def update_case():
         if artifact_count > 0:
             print(f"Found {artifact_count} existing artifacts, deleting...")
             session.execute(text("DELETE FROM artifacts WHERE case_id = :case_id"), {"case_id": case_id})
+            session.commit()
         
-        # Insert artifacts
+        # Insert artifacts using actual column names from migration
         for artifact in ARTIFACTS:
             artifact_id = str(uuid.uuid4())
             session.execute(text("""
                 INSERT INTO artifacts 
-                (id, case_id, name, description, artifact_type, filename, storage_path, file_size, sha256_hash, is_locked, display_order, created_at, updated_at)
+                (id, case_id, name, description, artifact_type, storage_path, file_size, file_hash_sha256, mime_type, created_at, updated_at)
                 VALUES 
-                (:id, :case_id, :name, :description, :artifact_type, :filename, :storage_path, :file_size, :sha256_hash, :is_locked, :display_order, NOW(), NOW())
+                (:id, :case_id, :name, :description, :artifact_type, :storage_path, :file_size, :file_hash_sha256, :mime_type, NOW(), NOW())
             """), {
                 "id": artifact_id,
                 "case_id": case_id,
                 "name": artifact["name"],
                 "description": artifact["description"],
                 "artifact_type": artifact["artifact_type"],
-                "filename": artifact["filename"],
                 "storage_path": artifact["storage_path"],
                 "file_size": 0,
-                "sha256_hash": secrets.token_hex(32),  # Placeholder hash
-                "is_locked": False,
-                "display_order": artifact["display_order"],
+                "file_hash_sha256": secrets.token_hex(32),  # Placeholder hash
+                "mime_type": artifact["mime_type"],
             })
             print(f"✓ Added artifact: {artifact['name']}")
         
