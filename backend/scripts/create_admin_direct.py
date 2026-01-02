@@ -6,14 +6,22 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from sqlalchemy import text
-from app.core.security import SecurityService
+from argon2 import PasswordHasher
 from app.db.session import get_sync_session
 
 
 def create_admin(email: str, password: str, username: str = "admin"):
     """Create admin user with provided credentials."""
     
-    security_service = SecurityService()
+    # Use lighter Argon2 settings for low-memory environments
+    hasher = PasswordHasher(
+        time_cost=2,
+        memory_cost=16384,  # 16 MB instead of 64 MB
+        parallelism=1,
+        hash_len=32,
+        salt_len=16,
+    )
+    
     session = get_sync_session()
     
     try:
@@ -23,7 +31,8 @@ def create_admin(email: str, password: str, username: str = "admin"):
         session.commit()
         print("Deleted all existing users and invite codes")
         
-        password_hash = security_service.hash_password(password)
+        password_hash = hasher.hash(password)
+        print("Password hashed successfully")
         
         # Insert admin user
         session.execute(text("""
