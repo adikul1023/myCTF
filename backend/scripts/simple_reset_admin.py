@@ -24,10 +24,11 @@ def reset_admin():
         session.commit()
         print("Deleted all existing users")
         
-        # Create admin user
-        email = "admin@forensic-ctf.com"
-        username = "admin"
-        password = "adminpassword123!"
+        # Get admin credentials from user
+        print("\nEnter admin credentials:")
+        email = input("Email: ").strip()
+        username = input("Username (default: admin): ").strip() or "admin"
+        password = input("Password: ").strip()
         
         password_hash = crypto_service.hash_password(password)
         

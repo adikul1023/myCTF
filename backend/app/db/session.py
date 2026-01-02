@@ -35,7 +35,7 @@ SessionLocal = async_sessionmaker(
 
 # Sync engine for scripts
 sync_engine = create_engine(
-    settings.DATABASE_URL.replace("+asyncpg", ""),  # Remove async driver
+    settings.DATABASE_URL.replace("postgresql+asyncpg://", "postgresql://"),  # Remove async driver
     echo=settings.DEBUG,
     poolclass=NullPool,
 )
