@@ -8,6 +8,8 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import NullPool
 
 from ..core.config import settings
@@ -30,6 +32,27 @@ SessionLocal = async_sessionmaker(
     autocommit=False,
     autoflush=False,
 )
+
+# Sync engine for scripts
+sync_engine = create_engine(
+    settings.DATABASE_URL.replace("+asyncpg", ""),  # Remove async driver
+    echo=settings.DEBUG,
+    poolclass=NullPool,
+)
+
+# Sync session factory
+SyncSessionLocal = sessionmaker(
+    bind=sync_engine,
+    class_=Session,
+    expire_on_commit=False,
+    autocommit=False,
+    autoflush=False,
+)
+
+
+def get_sync_session() -> Session:
+    """Get a synchronous database session for scripts."""
+    return SyncSessionLocal()
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
