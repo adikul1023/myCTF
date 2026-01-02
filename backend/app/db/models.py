@@ -279,7 +279,12 @@ class Case(Base, TimestampMixin):
     )
     
     difficulty: Mapped[DifficultyLevel] = mapped_column(
-        Enum(DifficultyLevel),
+        Enum(
+            DifficultyLevel,
+            values_callable=lambda x: [e.value for e in x],
+            create_constraint=False,
+            native_enum=True,
+        ),
         default=DifficultyLevel.INTERMEDIATE,
         nullable=False,
     )
@@ -374,7 +379,12 @@ class Artifact(Base, TimestampMixin):
     )
     
     artifact_type: Mapped[ArtifactType] = mapped_column(
-        Enum(ArtifactType),
+        Enum(
+            ArtifactType,
+            values_callable=lambda x: [e.value for e in x],
+            create_constraint=False,
+            native_enum=True,
+        ),
         default=ArtifactType.OTHER,
         nullable=False,
     )
@@ -587,7 +597,12 @@ class ArtifactUnlockCondition(Base, TimestampMixin):
     )
     
     condition_type: Mapped[UnlockConditionType] = mapped_column(
-        Enum(UnlockConditionType),
+        Enum(
+            UnlockConditionType,
+            values_callable=lambda x: [e.value for e in x],
+            create_constraint=False,
+            native_enum=True,
+        ),
         nullable=False,
     )
     
@@ -708,7 +723,12 @@ class TelemetryEvent(Base):
     )
     
     event_type: Mapped[TelemetryEventType] = mapped_column(
-        Enum(TelemetryEventType),
+        Enum(
+            TelemetryEventType,
+            values_callable=lambda x: [e.value for e in x],
+            create_constraint=False,
+            native_enum=True,
+        ),
         nullable=False,
         index=True,
     )
