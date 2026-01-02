@@ -44,8 +44,8 @@ def create_admin(email: str, password: str, username: str = "admin"):
         
         # Insert admin user
         session.execute(text("""
-            INSERT INTO users (id, email, username, password_hash, is_active, is_admin, invite_code_used, flag_salt, created_at, updated_at)
-            VALUES (:id, :email, :username, :password_hash, true, true, 'ADMIN_DIRECT', :flag_salt, NOW(), NOW())
+            INSERT INTO users (id, email, username, password_hash, is_active, is_admin, invite_code_used, flag_salt, flag_salt_rotated_at, created_at, updated_at)
+            VALUES (:id, :email, :username, :password_hash, true, true, 'ADMIN_DIRECT', :flag_salt, NOW(), NOW(), NOW())
         """), {
             "id": user_id,
             "email": email,
