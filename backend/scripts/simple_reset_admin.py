@@ -6,14 +6,14 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from sqlalchemy import text
-from app.core.crypto import CryptoService
+from app.core.security import SecurityService
 from app.db.session import get_sync_session
 
 
 def reset_admin():
     """Delete all users and create a new admin user."""
     
-    crypto_service = CryptoService()
+    security_service = SecurityService()
     
     # Create session
     session = get_sync_session()
@@ -31,7 +31,7 @@ def reset_admin():
         username = input("Username (default: admin): ").strip() or "admin"
         password = input("Password: ").strip()
         
-        password_hash = crypto_service.hash_password(password)
+        password_hash = security_service.hash_password(password)
         
         # Insert admin user
         session.execute(text("""
