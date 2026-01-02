@@ -38,8 +38,8 @@ export async function login(
   password: string
 ): Promise<{ success: boolean; error?: string }> {
   const response = await api.login(email, password);
-  if (response.status === 200 && response.data?.access_token) {
-    setToken(response.data.access_token);
+  if (response.status === 200 && (response.data as any)?.access_token) {
+    setToken((response.data as any).access_token);
     return { success: true };
   }
   return { success: false, error: response.error || 'Login failed' };
