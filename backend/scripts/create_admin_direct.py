@@ -2,6 +2,7 @@
 
 import sys
 import os
+import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -34,11 +35,15 @@ def create_admin(email: str, password: str, username: str = "admin"):
         password_hash = hasher.hash(password)
         print("Password hashed successfully")
         
+        # Generate UUID for user
+        user_id = str(uuid.uuid4())
+        
         # Insert admin user
         session.execute(text("""
-            INSERT INTO users (email, username, password_hash, is_active, is_admin, invite_code_used, created_at, updated_at)
-            VALUES (:email, :username, :password_hash, true, true, 'ADMIN_DIRECT', NOW(), NOW())
+            INSERT INTO users (id, email, username, password_hash, is_active, is_admin, invite_code_used, created_at, updated_at)
+            VALUES (:id, :email, :username, :password_hash, true, true, 'ADMIN_DIRECT', NOW(), NOW())
         """), {
+            "id": user_id,
             "email": email,
             "username": username,
             "password_hash": password_hash
