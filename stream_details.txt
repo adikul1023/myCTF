@@ -1,0 +1,21 @@
+WARNING: No libpcap provider available ! pcap won't be used
+Total packets: 98008
+
+Found 1 packets with IP 104.21.67.185
+
+Stream range: Packet #97004 to #97004
+Total packets in stream: 1
+Total bytes: 265 (0.26 KB)
+
+First 10 packets in stream:
+  #97004: 23:48:12.150000 | 192.168.1.105 -> 104.21.67.185 | 265 bytes | Flags: PA
+
+Upload packets (to 104.21.67.185): 1
+Upload bytes: 265 (0.26 KB)
+
+Download packets (from 104.21.67.185): 0
+Download bytes: 0 (0.00 KB)
+
+Stream duration: 0.00 seconds
+Start: 2024-11-14 23:48:12.150000
+End: 2024-11-14 23:48:12.150000

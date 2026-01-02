@@ -1,0 +1,105 @@
+# Forensic CTF Platform - Git Ignore
+
+# ============== Environment ==============
+.env
+.env.local
+.env.*.local
+*.env
+
+# ============== Python ==============
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# ============== IDE ==============
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# ============== Testing ==============
+.coverage
+.tox
+.nox
+.pytest_cache/
+htmlcov/
+.hypothesis/
+coverage.xml
+*.cover
+*.py,cover
+
+# ============== Typing ==============
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ============== Docker ==============
+docker/ssl/*.pem
+docker/ssl/*.key
+docker/ssl/*.crt
+
+# ============== Database ==============
+*.db
+*.sqlite3
+
+# ============== Logs ==============
+*.log
+logs/
+
+# ============== OS ==============
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ============== Artifacts/Uploads ==============
+uploads/
+artifacts/
+temp/
+tmp/
+
+# ============== Secrets ==============
+secrets/
+*.pem
+*.key
+credentials.json
+
+# ============== Wrangler ==============
+.wrangler/
+.dev.vars
+
+# ============== Alembic ==============
+# Keep versions but ignore local test migrations
+# alembic/versions/local_*.py

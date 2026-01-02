@@ -1,0 +1,28 @@
+WARNING: No libpcap provider available ! pcap won't be used
+Total packets: 8972
+
+Time range:
+  First packet: 2024-11-13 23:48:12
+  Last packet: 2024-11-14 02:11:00.220408
+
+Top 10 destination IPs:
+  142.250.80.46: 1863 packets
+  140.82.114.4: 1800 packets
+  34.199.1.92: 1777 packets
+  192.168.1.10: 1774 packets
+  151.101.1.69: 1758 packets
+
+Top 10 source IPs:
+  192.168.1.105: 8972 packets
+
+Packets with 104.x.x.x IPs: 0
+
+TCP stream analysis:
+  Total TCP packets: 8972
+
+First 5 packets:
+  0: 2024-11-13 23:48:12 | 192.168.1.105 -> 34.199.1.92 | 2858 bytes
+  1: 2024-11-13 23:48:12.955102 | 192.168.1.105 -> 140.82.114.4 | 2040 bytes
+  2: 2024-11-13 23:48:13.910204 | 192.168.1.105 -> 192.168.1.10 | 3987 bytes
+  3: 2024-11-13 23:48:14.865306 | 192.168.1.105 -> 151.101.1.69 | 1823 bytes
+  4: 2024-11-13 23:48:15.820408 | 192.168.1.105 -> 192.168.1.10 | 2354 bytes

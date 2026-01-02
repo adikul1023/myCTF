@@ -1,0 +1,30 @@
+WARNING: No libpcap provider available ! pcap won't be used
+Total packets: 98001
+
+Found 688 packets with IP 104.21.67.185
+
+Stream range: Packet #97009 to #97705
+Total packets in stream: 688
+Total bytes: 894,185 (873.23 KB)
+
+First 10 packets in stream:
+  #97009: 23:48:12.000000 | 192.168.1.105 -> 104.21.67.185 | 40 bytes | Flags: S
+  #97010: 23:48:12.050000 | 104.21.67.185 -> 192.168.1.105 | 40 bytes | Flags: SA
+  #97011: 23:48:12.100000 | 192.168.1.105 -> 104.21.67.185 | 40 bytes | Flags: A
+  #97013: 23:48:12.200000 | 104.21.67.185 -> 192.168.1.105 | 105 bytes | Flags: PA
+  #97014: 23:48:12.250000 | 192.168.1.105 -> 104.21.67.185 | 1440 bytes | Flags: PA
+  #97015: 23:48:12.255000 | 104.21.67.185 -> 192.168.1.105 | 40 bytes | Flags: A
+  #97016: 23:48:12.260000 | 192.168.1.105 -> 104.21.67.185 | 1440 bytes | Flags: PA
+  #97017: 23:48:12.270000 | 192.168.1.105 -> 104.21.67.185 | 1440 bytes | Flags: PA
+  #97018: 23:48:12.280000 | 192.168.1.105 -> 104.21.67.185 | 1440 bytes | Flags: PA
+  #97019: 23:48:12.290000 | 192.168.1.105 -> 104.21.67.185 | 1440 bytes | Flags: PA
+
+Upload packets (to 104.21.67.185): 623
+Upload bytes: 891,520 (870.62 KB)
+
+Download packets (from 104.21.67.185): 65
+Download bytes: 2,665 (2.60 KB)
+
+Stream duration: 6.43 seconds
+Start: 2024-11-14 23:48:12
+End: 2024-11-14 23:48:18.430000

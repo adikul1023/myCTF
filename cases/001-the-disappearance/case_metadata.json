@@ -1,0 +1,218 @@
+{
+  "case_id": "001",
+  "slug": "the-disappearance",
+  "title": "The Disappearance",
+  "subtitle": "A Data Security Incident Investigation",
+  "difficulty": "intermediate",
+  "points_total": 500,
+  
+  "narrative": {
+    "background": "Marcus Chen, a senior software engineer at Nexus Dynamics, failed to appear for work on November 15th, 2024. His access badge wasn't used, his phone went straight to voicemail, and his apartment was found empty. HR initially assumed a family emergency, but when they couldn't reach him for 48 hours, they escalated to Security. A preliminary review of access logs showed unusual patterns in the days leading up to his disappearance. You've been brought in to investigate.",
+    
+    "briefing": "Your task is to analyze the digital artifacts recovered from Marcus Chen's work accounts and devices. Security has already preserved: a GitHub organization export, his Telegram backup, photos from his device, network captures from his workstation, and a forensic image of his laptop. Your primary objective is to determine if data was exfiltrated and identify any external contacts involved.",
+    
+    "objectives": [
+      "Analyze all provided artifacts for signs of data exfiltration",
+      "Identify any external contacts Marcus may have communicated with",
+      "Determine the method and timing of any data transfer",
+      "Recover the external contact email used for coordination"
+    ]
+  },
+  
+  "artifacts": [
+    {
+      "id": "github-export",
+      "name": "GitHub Organization Export",
+      "description": "Complete export of the nexus-dynamics-org GitHub organization, including all repositories Marcus had access to, commit histories, and organization metadata.",
+      "type": "archive",
+      "filename": "github_export.tar.gz",
+      "size_hint": "~45 MB",
+      "unlock_order": 1,
+      "hints": [
+        {"cost": 25, "text": "Focus on repositories Marcus directly contributed to."},
+        {"cost": 50, "text": "Backup files often contain information that was meant to be deleted."},
+        {"cost": 100, "text": "Look for commits made on September 3rd, 2024 in the internal-tools repository."}
+      ]
+    },
+    {
+      "id": "telegram-export", 
+      "name": "Telegram Chat Export",
+      "description": "Export of Marcus's Telegram activity from a tech industry group chat he participated in.",
+      "type": "json",
+      "filename": "telegram_export.tar.gz",
+      "size_hint": "~12 MB",
+      "unlock_order": 2,
+      "hints": [
+        {"cost": 25, "text": "Not all messages are from Marcus - look for forwarded content."},
+        {"cost": 50, "text": "The message ID in the 4800s range contains critical information."},
+        {"cost": 100, "text": "Look for a forwarded message from 'DataHaven' around November 14th - it's cryptic but confirms a handoff."}
+      ]
+    },
+    {
+      "id": "image-dump",
+      "name": "Device Photo Library",
+      "description": "312 images recovered from Marcus's iPhone backup. Most appear to be screenshots, memes, and wallpapers.",
+      "type": "archive",
+      "filename": "image_dump.tar.gz", 
+      "size_hint": "~890 MB",
+      "unlock_order": 3,
+      "hints": [
+        {"cost": 25, "text": "Only 2 of the 312 images contain meaningful forensic data."},
+        {"cost": 50, "text": "EXIF metadata may reveal locations. Also consider steganography."},
+        {"cost": 100, "text": "IMG_2847.jpg has partial EXIF. wallpaper_abstract_047.png has LSB steganography."}
+      ]
+    },
+    {
+      "id": "network-capture",
+      "name": "Network Traffic Capture",
+      "description": "48-hour PCAP capture from Marcus's workstation network port, spanning November 13-15, 2024.",
+      "type": "pcap", 
+      "filename": "network_capture.pcap",
+      "size_hint": "~2.1 GB",
+      "unlock_order": 4,
+      "unlock_condition": {
+        "type": "artifact_downloaded",
+        "artifact_id": "telegram-export"
+      },
+      "hints": [
+        {"cost": 25, "text": "Most traffic is routine. Look for anomalous destinations."},
+        {"cost": 50, "text": "Correlate timestamps with the Telegram forwarded message."},
+        {"cost": 100, "text": "An encrypted burst to paste.sh occurs 72 seconds after the Telegram forward."}
+      ]
+    },
+    {
+      "id": "disk-image",
+      "name": "Laptop Forensic Image",
+      "description": "Forensic image of Marcus's MacBook Pro. Contains browser history, shell history, and potentially deleted files.",
+      "type": "forensic-image",
+      "filename": "disk_image.dd.gz",
+      "size_hint": "~512 MB (compressed)",
+      "unlock_order": 5,
+      "unlock_condition": {
+        "type": "submission_correct",
+        "challenge_id": "001-preliminary"
+      },
+      "hints": [
+        {"cost": 25, "text": "Deleted files may still be recoverable from unallocated space."},
+        {"cost": 50, "text": "Look for hidden files (starting with .) that were deleted."},
+        {"cost": 100, "text": "Use photorec or scalpel to recover .intent_log from deleted sectors."}
+      ]
+    }
+  ],
+  
+  "challenges": [
+    {
+      "id": "001-preliminary",
+      "title": "Initial Assessment",
+      "description": "Based on your initial review of the GitHub export, identify which repository contains evidence of credential cleanup.",
+      "points": 50,
+      "type": "text",
+      "answer_format": "repository-name",
+      "validation": {
+        "type": "exact",
+        "value": "internal-tools"
+      },
+      "order": 1
+    },
+    {
+      "id": "001-timestamp",
+      "title": "Timeline Analysis", 
+      "description": "What was the exact UTC timestamp of the suspicious network burst to the encrypted paste service? (Format: YYYY-MM-DD HH:MM:SS)",
+      "points": 75,
+      "type": "text",
+      "answer_format": "YYYY-MM-DD HH:MM:SS",
+      "validation": {
+        "type": "exact",
+        "value": "2024-11-14 23:48:12"
+      },
+      "order": 2
+    },
+    {
+      "id": "001-stego",
+      "title": "Hidden in Plain Sight",
+      "description": "What is the password hidden in the steganographic payload?",
+      "points": 100,
+      "type": "text",
+      "answer_format": "plaintext password",
+      "validation": {
+        "type": "exact",
+        "value": "nexus2024!"
+      },
+      "order": 3
+    },
+    {
+      "id": "001-contact",
+      "title": "External Contact",
+      "description": "Identify the Telegram handle of the external contact who coordinated the extraction.",
+      "points": 75,
+      "type": "text",
+      "answer_format": "Telegram username",
+      "validation": {
+        "type": "exact", 
+        "value": "DataHaven"
+      },
+      "order": 4
+    },
+    {
+      "id": "001-final",
+      "title": "The Dead Drop",
+      "description": "What external email address was Marcus using to coordinate the data exfiltration? This is the semantic truth of the case.",
+      "points": 200,
+      "type": "flag",
+      "answer_format": "email address",
+      "validation": {
+        "type": "hmac_flag",
+        "case_id": "001",
+        "challenge_id": "final"
+      },
+      "order": 5,
+      "is_final": true
+    }
+  ],
+  
+  "scoring": {
+    "time_bonus": {
+      "enabled": true,
+      "max_bonus_percent": 25,
+      "decay_hours": 48
+    },
+    "hint_penalty": {
+      "enabled": true,
+      "penalty_per_hint": "hint_cost"
+    },
+    "first_blood": {
+      "enabled": true,
+      "bonus_points": 50
+    }
+  },
+  
+  "metadata": {
+    "author": "CTF Platform",
+    "version": "1.0.0",
+    "created_at": "2024-01-01T00:00:00Z",
+    "estimated_time_minutes": 120,
+    "skills_tested": [
+      "Git forensics",
+      "Metadata analysis", 
+      "Network traffic analysis",
+      "Steganography detection",
+      "File carving",
+      "Timeline correlation"
+    ],
+    "tools_recommended": [
+      "Wireshark",
+      "ExifTool",
+      "steghide",
+      "photorec/scalpel",
+      "jq",
+      "Git"
+    ]
+  },
+  
+  "anti_cheat": {
+    "flag_personalization": true,
+    "submission_rate_limit": "5 per minute",
+    "hint_cooldown_seconds": 60,
+    "answer_similarity_check": true
+  }
+}

@@ -1,0 +1,110 @@
+# Forensic CTF Platform - Docker Compose
+# Development environment setup
+
+version: "3.9"
+
+services:
+  # ============== Backend API ==============
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/Dockerfile.dev
+    container_name: forensic-ctf-backend
+    ports:
+      - "8002:8000"
+    environment:
+      - DEBUG=${DEBUG:-true}
+      - SECRET_KEY=${SECRET_KEY}
+      - FLAG_SECRET_KEY=${FLAG_SECRET_KEY}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_PUBLIC_ENDPOINT=localhost:9000
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - MINIO_BUCKET_NAME=${MINIO_BUCKET_NAME}
+      - MINIO_USE_SSL=${MINIO_USE_SSL:-false}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - RATE_LIMIT_SUBMISSIONS_PER_MINUTE=${RATE_LIMIT_SUBMISSIONS_PER_MINUTE:-10}
+      - RATE_LIMIT_AUTH_PER_MINUTE=${RATE_LIMIT_AUTH_PER_MINUTE:-5}
+    volumes:
+      - ./backend:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - forensic-ctf-network
+    restart: unless-stopped
+
+  # ============== PostgreSQL Database ==============
+  postgres:
+    image: postgres:16-alpine
+    container_name: forensic-ctf-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - forensic-ctf-network
+    restart: unless-stopped
+
+  # ============== MinIO (S3-compatible storage) ==============
+  minio:
+    image: minio/minio:latest
+    container_name: forensic-ctf-minio
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
+      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - forensic-ctf-network
+    restart: unless-stopped
+
+  # ============== MinIO Setup (init bucket) ==============
+  minio-setup:
+    image: minio/mc:latest
+    container_name: forensic-ctf-minio-setup
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set myminio http://minio:9000 ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY};
+      mc mb myminio/${MINIO_BUCKET_NAME} --ignore-existing;
+      exit 0;
+      "
+    networks:
+      - forensic-ctf-network
+
+networks:
+  forensic-ctf-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  minio_data:

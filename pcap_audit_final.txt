@@ -1,0 +1,13 @@
+Auditing network_traffic.pcap...
+Total TLS ClientHellos: 37
+Found domains (grep match):
+  slack.com: 8
+  cloudflare.com: 7
+  aws.amazon.com: 4
+  microsoft.com: 4
+  google.com: 2
+  github.com: 5
+  paste.sh: 1
+
+[!] paste.sh found in packet #49858
+    Timestamp: 2024-11-14 23:48:12.023000

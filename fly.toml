@@ -1,0 +1,52 @@
+# fly.toml app configuration file generated for forensic-ctf on 2026-01-02T13:02:43+05:30
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'forensic-ctf'
+primary_region = 'sin'
+
+[build]
+  dockerfile = 'docker/Dockerfile.backend'
+
+[env]
+  DEBUG = 'false'
+  MINIO_USE_SSL = 'true'
+  POSTGRES_PORT = '5432'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type = 'requests'
+    hard_limit = 250
+    soft_limit = 200
+
+[checks]
+  [checks.health]
+    port = 8000
+    type = 'http'
+    interval = '15s'
+    timeout = '10s'
+    grace_period = '30s'
+    method = 'GET'
+    path = '/health'
+
+  [checks.ready]
+    port = 8000
+    type = 'http'
+    interval = '30s'
+    timeout = '10s'
+    grace_period = '1m0s'
+    method = 'GET'
+    path = '/health/ready'
+
+[[vm]]
+  memory = '256mb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 256

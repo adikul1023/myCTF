@@ -1,0 +1,6 @@
+name = "forensic-ctf"
+compatibility_date = "2025-01-02"
+
+[[r2_buckets]]
+binding = "FORENSIC_ARTIFACTS"
+bucket_name = "forensic-ctf-artifacts"
