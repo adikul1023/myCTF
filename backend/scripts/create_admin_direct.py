@@ -38,15 +38,20 @@ def create_admin(email: str, password: str, username: str = "admin"):
         # Generate UUID for user
         user_id = str(uuid.uuid4())
         
+        # Generate flag_salt (random 64 hex chars)
+        import secrets
+        flag_salt = secrets.token_hex(32)
+        
         # Insert admin user
         session.execute(text("""
-            INSERT INTO users (id, email, username, password_hash, is_active, is_admin, invite_code_used, created_at, updated_at)
-            VALUES (:id, :email, :username, :password_hash, true, true, 'ADMIN_DIRECT', NOW(), NOW())
+            INSERT INTO users (id, email, username, password_hash, is_active, is_admin, invite_code_used, flag_salt, created_at, updated_at)
+            VALUES (:id, :email, :username, :password_hash, true, true, 'ADMIN_DIRECT', :flag_salt, NOW(), NOW())
         """), {
             "id": user_id,
             "email": email,
             "username": username,
-            "password_hash": password_hash
+            "password_hash": password_hash,
+            "flag_salt": flag_salt
         })
         
         session.commit()
