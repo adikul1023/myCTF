@@ -48,7 +48,7 @@ export default function DashboardPage() {
     const casesResponse = await api.getCases();
     if (casesResponse.status === 200 && casesResponse.data) {
       // API returns { cases: [], total, page, ... }
-      const casesList = casesResponse.data.cases || [];
+      const casesList = (casesResponse.data as any).cases || [];
       setCases(casesList);
 
       // Get status for each case
