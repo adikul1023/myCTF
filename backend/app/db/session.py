@@ -33,26 +33,36 @@ SessionLocal = async_sessionmaker(
     autoflush=False,
 )
 
-# Sync engine for scripts
-sync_engine = create_engine(
-    settings.DATABASE_URL.replace("postgresql+asyncpg://", "postgresql://"),  # Remove async driver
-    echo=settings.DEBUG,
-    poolclass=NullPool,
-)
+# Lazy sync engine creation for scripts only (avoids psycopg2 dependency at module import)
+_sync_engine = None
+_SyncSessionLocal = None
 
-# Sync session factory
-SyncSessionLocal = sessionmaker(
-    bind=sync_engine,
-    class_=Session,
-    expire_on_commit=False,
-    autocommit=False,
-    autoflush=False,
-)
+
+def get_sync_engine():
+    """Get or create synchronous engine for scripts."""
+    global _sync_engine
+    if _sync_engine is None:
+        from sqlalchemy import create_engine
+        _sync_engine = create_engine(
+            settings.DATABASE_URL.replace("postgresql+asyncpg://", "postgresql://"),
+            echo=settings.DEBUG,
+            poolclass=NullPool,
+        )
+    return _sync_engine
 
 
 def get_sync_session() -> Session:
     """Get a synchronous database session for scripts."""
-    return SyncSessionLocal()
+    global _SyncSessionLocal
+    if _SyncSessionLocal is None:
+        _SyncSessionLocal = sessionmaker(
+            bind=get_sync_engine(),
+            class_=Session,
+            expire_on_commit=False,
+            autocommit=False,
+            autoflush=False,
+        )
+    return _SyncSessionLocal()
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
