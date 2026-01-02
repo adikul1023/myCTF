@@ -19,10 +19,11 @@ def reset_admin():
     session = get_sync_session()
     
     try:
-        # Delete all users
+        # Delete in correct order due to foreign key constraints
+        session.execute(text("DELETE FROM invite_codes"))
         session.execute(text("DELETE FROM users"))
         session.commit()
-        print("Deleted all existing users")
+        print("Deleted all existing users and invite codes")
         
         # Get admin credentials from user
         print("\nEnter admin credentials:")
