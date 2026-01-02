@@ -12,7 +12,7 @@ from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query
-from fastapi.responses import StreamingResponse
+from fastapi.responses import RedirectResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -193,7 +193,8 @@ async def download_artifact(
     """
     Download a forensic artifact file.
     
-    Streams the file directly from storage with chunked transfer for optimal performance.
+    Generates a presigned URL from R2 and redirects to it.
+    This avoids streaming through the backend, reducing memory usage.
     Requires authentication.
     """
     # Verify case exists and is active
@@ -228,52 +229,26 @@ async def download_artifact(
     if not safe_name.endswith(".zip"):
         safe_name += ".zip"
     
-    # Use chunked streaming generator for better performance with large files
-    async def stream_file():
-        """Stream file in chunks for better memory efficiency and faster start."""
-        file_response = None
-        try:
-            file_response = storage_client.client.get_object(
-                bucket_name=storage_client.bucket_name,
-                object_name=object_name,
-            )
-            # Use 256KB chunks for optimal streaming performance
-            chunk_size = 256 * 1024
-            while True:
-                chunk = file_response.read(chunk_size)
-                if not chunk:
-                    break
-                yield chunk
-        finally:
-            if file_response:
-                file_response.close()
-                file_response.release_conn()
+    # Generate presigned URL valid for 1 hour
+    try:
+        presigned_url = storage_client.client.presigned_get_object(
+            bucket_name=storage_client.bucket_name,
+            object_name=object_name,
+            expires=timedelta(hours=1),
+            response_headers={
+                "response-content-disposition": f'attachment; filename="{safe_name}"',
+                "response-content-type": artifact.mime_type or "application/zip",
+            }
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate download URL: {str(e)}",
+        )
     
-    # Get file size from artifact or stat the object
-    file_size = artifact.file_size
-    if not file_size:
-        try:
-            stat = storage_client.client.stat_object(
-                bucket_name=storage_client.bucket_name,
-                object_name=object_name,
-            )
-            file_size = stat.size
-        except Exception:
-            file_size = None
-    
-    headers = {
-        "Content-Disposition": f'attachment; filename="{safe_name}"',
-        "Cache-Control": "no-cache",
-        "Accept-Ranges": "bytes",
-    }
-    if file_size:
-        headers["Content-Length"] = str(file_size)
-    
-    return StreamingResponse(
-        stream_file(),
-        media_type=artifact.mime_type or "application/zip",
-        headers=headers,
-    )
+    # Redirect to the presigned URL
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url=presigned_url, status_code=307)
 
 
 @router.get(
