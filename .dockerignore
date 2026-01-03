@@ -1,146 +1,124 @@
-# flyctl launch added from .gitignore
-# Forensic CTF Platform - Git Ignore
+# Forensic CTF Platform - Docker Ignore
 
 # ============== Environment ==============
-**\.env
-**\.env.local
-**\.env.*.local
-**\*.env
+**/.env
+**/.env.local
+**/.env.*.local
+**/*.env
 
 # ============== Python ==============
-**\__pycache__
-**\*.py[cod]
-**\*$py.class
-**\*.so
-**\.Python
-**\build
-**\develop-eggs
-**\dist
-**\downloads
-**\eggs
-**\.eggs
-**\lib
-**\lib64
-**\parts
-**\sdist
-**\var
-**\wheels
-**\*.egg-info
-**\.installed.cfg
-**\*.egg
+**/__pycache__
+**/*.py[cod]
+**/*$py.class
+**/*.so
+**/.Python
+**/build
+**/develop-eggs
+**/dist
+**/downloads
+**/eggs
+**/.eggs
+**/lib
+**/lib64
+**/parts
+**/sdist
+**/var
+**/wheels
+**/*.egg-info
+**/.installed.cfg
+**/*.egg
 
 # Virtual environments
-**\venv
-**\ENV
-**\env
-**\.venv
+**/venv
+**/ENV
+**/env
+**/.venv
 
 # ============== IDE ==============
-**\.idea
-**\.vscode
-**\*.swp
-**\*.swo
-**\*~
-**\.project
-**\.pydevproject
-**\.settings
-**\*.sublime-workspace
-**\*.sublime-project
+**/.idea
+**/.vscode
+**/*.swp
+**/*.swo
+**/*~
+**/.project
+**/.pydevproject
+**/.settings
+**/*.sublime-workspace
+**/*.sublime-project
 
 # ============== Testing ==============
-**\.coverage
-**\.tox
-**\.nox
-**\.pytest_cache
-**\htmlcov
-**\.hypothesis
-**\coverage.xml
-**\*.cover
-**\*.py,cover
+**/.coverage
+**/.tox
+**/.nox
+**/.pytest_cache
+**/htmlcov
+**/.hypothesis
+**/coverage.xml
+**/*.cover
+**/*.py,cover
 
 # ============== Typing ==============
-**\.mypy_cache
-**\.dmypy.json
-**\dmypy.json
+**/.mypy_cache
+**/.dmypy.json
+**/dmypy.json
 
 # ============== Docker ==============
-**\docker\ssl\*.pem
-**\docker\ssl\*.key
-**\docker\ssl\*.crt
+**/docker/ssl/*.pem
+**/docker/ssl/*.key
+**/docker/ssl/*.crt
 
 # ============== Database ==============
-**\*.db
-**\*.sqlite3
+**/*.db
+**/*.sqlite3
 
 # ============== Logs ==============
-**\*.log
-**\logs
+**/*.log
+**/logs
 
 # ============== OS ==============
-**\.DS_Store
-**\.DS_Store?
-**\._*
-**\.Spotlight-V100
-**\.Trashes
-**\ehthumbs.db
-**\Thumbs.db
+**/.DS_Store
+**/.DS_Store?
+**/._*
+**/.Spotlight-V100
+**/.Trashes
+**/ehthumbs.db
+**/Thumbs.db
 
 # ============== Artifacts/Uploads ==============
-**\uploads
-**\artifacts
-**\temp
-**\tmp
+**/uploads
+**/artifacts
+**/temp
+**/tmp
 
 # ============== Secrets ==============
-**\secrets
-**\*.pem
-**\*.key
-**\credentials.json
+**/secrets
+**/*.pem
+**/*.key
+**/credentials.json
 
-# ============== Alembic ==============
-# Keep versions but ignore local test migrations
-# alembic/versions/local_*.py
+# Frontend (Next.js)
+frontend/node_modules
+frontend/.pnp
+frontend/**/.pnp.*
+frontend/**/.yarn/*
+!frontend/**/.yarn/patches
+!frontend/**/.yarn/plugins
+!frontend/**/.yarn/releases
+!frontend/**/.yarn/versions
+frontend/coverage
+frontend/.next
+frontend/out
+frontend/build
+frontend/**/.DS_Store
+frontend/**/*.pem
+frontend/**/*.log
+frontend/**/.pnpm-debug.log*
+frontend/**/.env*
+frontend/**/.vercel
+frontend/**/*.tsbuildinfo
+frontend/**/next-env.d.ts
 
-# flyctl launch added from frontend\.gitignore
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-frontend\node_modules
-frontend\.pnp
-frontend\**\.pnp.*
-frontend\**\.yarn\*
-!frontend\**\.yarn\patches
-!frontend\**\.yarn\plugins
-!frontend\**\.yarn\releases
-!frontend\**\.yarn\versions
-
-# testing
-frontend\coverage
-
-# next.js
-frontend\.next
-frontend\out
-
-# production
-frontend\build
-
-# misc
-frontend\**\.DS_Store
-frontend\**\*.pem
-
-# debug
-frontend\**\npm-debug.log*
-frontend\**\yarn-debug.log*
-frontend\**\yarn-error.log*
-frontend\**\.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-frontend\**\.env*
-
-# vercel
-frontend\**\.vercel
-
-# typescript
-frontend\**\*.tsbuildinfo
-frontend\**\next-env.d.ts
+# Deployment files
 fly.toml
+render.yaml
+wrangler.toml
