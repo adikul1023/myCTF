@@ -115,22 +115,12 @@ export default function CasePage() {
   const handleDownload = async (artifactId: string, filename: string) => {
     try {
       const response = await api.downloadArtifact(caseId, artifactId);
-      if (!response.ok) {
+      if (response.status === 200 && response.data?.download_url) {
+        // Open the presigned URL directly - browser will download the file
+        window.open(response.data.download_url, '_blank');
+      } else {
         alert('Failed to download artifact');
-        return;
       }
-      // Backend streams the file directly
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      // Create safe filename
-      const safeName = filename.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_.-]/g, '');
-      a.download = safeName.endsWith('.zip') ? safeName : `${safeName}.zip`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
     } catch {
       alert('Failed to download artifact');
     }

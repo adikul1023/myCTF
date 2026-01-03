@@ -130,23 +130,10 @@ class ApiClient {
   }
 
   async downloadArtifact(caseId: string, artifactId: string) {
-    const token = getToken();
-    const headers: Record<string, string> = {};
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    const response = await fetch(
-      `${this.baseUrl}/api/v1/cases/${caseId}/artifacts/${artifactId}/download`,
-      { headers }
+    // Get presigned URL from backend
+    return this.request<{ download_url: string; filename: string; expires_in: number }>(
+      `/api/v1/cases/${caseId}/artifacts/${artifactId}/download`
     );
-    // Handle 401 - redirect to login
-    if (response.status === 401) {
-      clearToken();
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
-      }
-    }
-    return response;
   }
 
   // Submissions (replaces challenges)

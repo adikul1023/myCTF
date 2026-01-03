@@ -241,9 +241,12 @@ async def download_artifact(
             detail=f"Failed to generate download URL: {str(e)}",
         )
     
-    # Redirect to the presigned URL
-    from fastapi.responses import RedirectResponse
-    return RedirectResponse(url=presigned_url, status_code=307)
+    # Return presigned URL for frontend to handle
+    return {
+        "download_url": presigned_url,
+        "filename": safe_name,
+        "expires_in": 3600,  # 1 hour in seconds
+    }
 
 
 @router.get(
