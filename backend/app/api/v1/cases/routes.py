@@ -231,14 +231,9 @@ async def download_artifact(
     
     # Generate presigned URL valid for 1 hour
     try:
-        presigned_url = storage_client.client.presigned_get_object(
-            bucket_name=storage_client.bucket_name,
+        presigned_url = await storage_client.get_presigned_download_url(
             object_name=object_name,
             expires=timedelta(hours=1),
-            response_headers={
-                "response-content-disposition": f'attachment; filename="{safe_name}"',
-                "response-content-type": artifact.mime_type or "application/zip",
-            }
         )
     except Exception as e:
         raise HTTPException(
