@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: forensic-ctf
+    runtime: docker
+    dockerfilePath: ./docker/Dockerfile.backend
+    dockerContext: .
+    plan: free
+    region: singapore
+    healthCheckPath: /health
+    envVars:
+      - key: DEBUG
+        value: false
+      - key: MINIO_USE_SSL
+        value: true
+      - key: POSTGRES_PORT
+        value: 5432
+      - key: API_V1_PREFIX
+        value: /api/v1
+      # Optimize Argon2 for 512MB RAM
+      - key: ARGON2_MEMORY_COST
+        value: 32768
+      - key: ARGON2_TIME_COST
+        value: 4
+      - key: ARGON2_PARALLELISM
+        value: 2
+      # Secrets (add via Render dashboard)
+      - key: SECRET_KEY
+        sync: false
+      - key: FLAG_SECRET_KEY
+        sync: false
+      - key: POSTGRES_HOST
+        sync: false
+      - key: POSTGRES_USER
+        sync: false
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: POSTGRES_DB
+        sync: false
+      - key: MINIO_ENDPOINT
+        sync: false
+      - key: MINIO_PUBLIC_ENDPOINT
+        sync: false
+      - key: MINIO_ACCESS_KEY
+        sync: false
+      - key: MINIO_SECRET_KEY
+        sync: false
+      - key: MINIO_BUCKET_NAME
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
